@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Snack Video</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; background: #101010; color: #fff;
+      font-family: Arial, sans-serif;
+    }
+    header {
+      background: #050505; color: #ff3158; padding: 18px 12px;
+      text-align: center; font-size: 28px; font-weight: bold;
+      border-bottom: 1px solid #292929;
+    }
+    main { max-width: 480px; margin: 0 auto; padding: 18px; }
+    .panel {
+      background: #1c1c1c; border: 1px solid #333;
+      border-radius: 12px; padding: 16px; margin-bottom: 16px;
+    }
+    input, button {
+      display: block; width: 100%; padding: 13px; margin: 9px 0;
+      border-radius: 8px; border: 1px solid #444; font-size: 16px;
+    }
+    input { background: #101010; color: white; }
+    button {
+      background: #ff3158; border: 0; color: white;
+      font-weight: bold; cursor: pointer;
+    }
+    button.secondary { background: #383838; }
+    button:disabled { opacity: .6; cursor: wait; }
+    .note { color: #c7c7c7; font-size: 14px; line-height: 1.5; }
+    #app { display: none; }
+    video { width: 100%; max-height: 65vh; background: #000; margin-top: 12px; border-radius: 8px; }
+    #message { overflow-wrap: anywhere; }
+  </style>
+</head>
+<body>
+  <header>Snack Video</header>
+  <main>
+    <section id="auth" class="panel">
+      <h2>Create account / Login</h2>
+      <p class="note">Email aur kam az kam 6 characters ka password use karo.</p>
+      <input id="email" type="email" placeholder="Email address" autocomplete="email">
+      <input id="password" type="password" placeholder="Password (6+ characters)" autocomplete="current-password">
+      <button id="signup">Create account</button>
+      <button id="login" class="secondary">Login</button>
+      <p id="message" class="note" aria-live="polite"></p>
+    </section>
+
+    <section id="app" class="panel">
+      <h2>Welcome to Snack Video!</h2>
+      <p id="userEmail" class="note"></p>
+      <label for="videoFile">Apni video select karo:</label>
+      <input id="videoFile" type="file" accept="video/*">
+      <video id="myVideo" controls playsinline></video>
+      <p class="note">
+        Important: is version mein video sirf tumhare apne device par preview hoti hai.
+        Doosre users ko online video dikhane ke liye alag video-storage service connect karni hogi.
+        Firebase Storage tumhare project mein billing/upgrade maang sakta hai, is liye abhi koi payment mat karna.
+      </p>
+      <button id="logout" class="secondary">Logout</button>
+    </section>
+  </main>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+    import {
+      getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
+      onAuthStateChanged, signOut
+    } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBFJcz2Iwg9ArDO_rN2AeEwFShJD0Q9MwM",
+      authDomain: "snack-video-b42cc.firebaseapp.com",
+      projectId: "snack-video-b42cc",
+      storageBucket: "snack-video-b42cc.firebasestorage.app",
+      messagingSenderId: "432494403639",
+      appId: "1:432494403639:web:22c61c8d18a53a7666dfb2"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    const authSection = document.getElementById("auth");
+    const appSection = document.getElementById("app");
+    const message = document.getElementById("message");
+    const signupButton = document.getElementById("signup");
+    const loginButton = document.getElementById("login");
+
+    signupButton.addEventListener("click", async () => {
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+      if (!email || !password) {
+        message.textContent = "Email aur password dono likho.";
+        return;
+      }
+      signupButton.disabled = true;
+      message.textContent = "Account ban raha hai...";
+      try {
+        await createUserWithEmailAndPassword(auth, email, password);
+        message.textContent = "Account ban gaya!";
+      } catch (error) {
+        message.textContent = friendlyError(error.code);
+      } finally {
+        signupButton.disabled = false;
+      }
+    });
+
+    loginButton.addEventListener("click", async () => {
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+      if (!email || !password) {
+        message.textContent = "Email aur password dono likho.";
+        return;
+      }
+      loginButton.disabled = true;
+      message.textContent = "Login ho raha hai...";
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        message.textContent = "Login successful!";
+      } catch (error) {
+        message.textContent = friendlyError(error.code);
+      } finally {
+        loginButton.disabled = false;
+      }
+    });
+
+    onAuthStateChanged(auth, (user) => {
+      authSection.style.display = user ? "none" : "block";
+      appSection.style.display = user ? "block" : "none";
+      document.getElementById("userEmail").textContent =
+        user ? "Logged in: " + user.email : "";
+    });
+
+    document.getElementById("logout").addEventListener("click", async () => {
+      await signOut(auth);
+      document.getElementById("videoFile").value = "";
+      document.getElementById("myVideo").removeAttribute("src");
+      document.getElementById("myVideo").load();
+    });
+
+    document.getElementById("videoFile").addEventListener("change", (event) => {
+      const file = event.target.files && event.target.files[0];
+      const video = document.getElementById("myVideo");
+      if (file) {
+        if (video.dataset.objectUrl) URL.revokeObjectURL(video.dataset.objectUrl);
+        const objectUrl = URL.createObjectURL(file);
+        video.dataset.objectUrl = objectUrl;
+        video.src = objectUrl;
+      }
+    });
+
+    function friendlyError(code) {
+      const messages = {
+        "auth/email-already-in-use": "Is email ka account pehle se hai. Login karo.",
+        "auth/invalid-email": "Email address theek likho.",
+        "auth/weak-password": "Password kam az kam 6 characters ka hona chahiye.",
+        "auth/invalid-credential": "Email ya password ghalat hai.",
+        "auth/network-request-failed": "Internet check karo aur dobara koshish karo.",
+        "auth/too-many-requests": "Bohat zyada koshish hui. Thori dair baad try karo."
+      };
+      return messages[code] || ("Error: " + code);
+    }
+  </script>
+</body>
+</html>
