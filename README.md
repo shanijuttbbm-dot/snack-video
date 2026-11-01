@@ -1,18 +1,45 @@
-SNACK VIDEO - quick starter project
+# Snack Video
 
-FILES:
-- index.html: mobile-first starter web app
-- firestore.rules: starting Firestore rules
+Snack Video is a mobile-friendly short-video sharing web app.
 
-SETUP:
-1. GitHub repository mein purani index.html ki backup copy bana lo.
-2. Is folder ki index.html ko repository mein index.html naam se upload/replace karo.
-3. Firebase Console > Firestore > Rules mein firestore.rules ka text paste karke Publish karo.
-4. Firebase Authentication > Sign-in method mein Email/Password enabled hona chahiye.
-5. Cloudinary unsigned preset `snack_video_upload` active hona chahiye.
+## Features
 
-IMPORTANT:
-This is a starter, not the complete TikTok-scale app. Voice/video calls, live streaming, push notifications, photo/video messages, true follow system, block/report, private accounts, and secure Cloudinary asset deletion are not implemented yet.
-Delete currently removes the Firestore post only; Cloudinary media remains stored.
-Firestore rules are starter rules and should be reviewed before public launch. Never put Cloudinary API Secret in index.html.
-Cloudinary and Firebase free plans have quotas; not unlimited.
+- Create account and login
+- Upload and watch videos
+- Like and comment on videos
+- Share videos
+- Save videos
+- Basic user profile
+- Search users
+- Text messaging
+- Auto-play video feed
+
+## Technologies
+
+- HTML, CSS and JavaScript
+- Firebase Authentication
+- Firebase Firestore
+- Cloudinary
+
+## Setup
+
+1. Download or clone this repository.
+2. Open `index.html` in a browser.
+3. Configure Firebase in `index.html`.
+4. Enable Email/Password Authentication in Firebase.
+5. Set up Firestore Database.
+6. Configure your Cloudinary upload preset.
+
+## Important
+
+This is a starter version. Some social features are not implemented yet.
+
+Voice calls, video calls and live streaming are not included.
+
+Cloudinary media deletion is not implemented. Deleting a post currently removes its Firestore record only.
+
+Firebase and Cloudinary usage may have free-plan limits.
+
+## Project
+
+**Snack Video**
