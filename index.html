@@ -20,7 +20,7 @@
 import{initializeApp}from"https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 import{getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 import{getFirestore,collection,addDoc,doc,setDoc,getDoc,getDocs,deleteDoc,updateDoc,query,where,orderBy,onSnapshot,serverTimestamp,arrayUnion,arrayRemove}from"https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
-const firebaseConfig={apiKey:"AIzaSyBFJcz2Iwg9ArDO_rDO_EwFShJD0Q9MwM",authDomain:"snack-video-b42cc.firebaseapp.com",projectId:"snack-video-b42cc",storageBucket:"snack-video-b42cc.firebasestorage.app",messagingSenderId:"432494403639",appId:"1:432494403639:web:22c61c8d18a53a7666dfb2"};
+const firebaseConfig={apiKey:"AIzaSyBFJcz2Iwg9ArDO_rN2AeEwFShJD0Q9MwM",authDomain:"snack-video-b42cc.firebaseapp.com",projectId:"snack-video-b42cc",storageBucket:"snack-video-b42cc.firebasestorage.app",messagingSenderId:"432494403639",appId:"1:432494403639:web:22c61c8d18a53a7666dfb2"};
 const CLOUD="x9fovbqa",PRESET="snack_video_upload",app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id);
 let me=null,stop=null,allVideos=[],current=0;
 const say=(id,t)=>$(id).textContent=t;
